@@ -37,6 +37,9 @@
   let brickOffsetTop = 30;
   let brickOffsetLeft = 30;
 
+  //second chance var
+  let lives = 3;
+
   //friend impressor var
   let score = 0;
 
@@ -99,7 +102,6 @@
            if(score == brickRowCount * brickColumnCount) {
              alert("O HECK YA");
              document.location.reload();
-             clearInterval(interval);
            }
           }
         }
@@ -148,6 +150,12 @@
     ctx.fillText("Score: " + score, 8, 20)
   }
 
+  function drawLives() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Lives: " + lives, 80, 20)
+  }
+
   //place pieces on the canvas and define motion
   function draw() {
     //draw canvas 
@@ -161,8 +169,9 @@
     //brick eliminator
     collisionDetection();
 
-    //score
+    //player stats
     drawScore();
+    drawLives();
     
     //defines container for ball motion
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
@@ -171,16 +180,24 @@
     }
     
     //this if clause holds the game ending conditions
-    if(y + dy < ballRadius) {
+    if (y + dy < ballRadius) {
       dy = -dy;
       ballColour = getRandomHexColour();
-    } else if(y + dy > canvas.height - ballRadius) {
+    } else if (y + dy > canvas.height - ballRadius) {
       if(x > paddleX && x < paddleX + paddleWidth) {
         dy = -dy;
-      }else{
-        alert("NOOOOOOO");
-        document.location.reload();
-        clearInterval(interval);
+      } else {
+        if (lives > 0) {
+          lives--;
+          dx = 2;
+          dy = -2;  
+          x = canvas.width/2;
+          y = canvas.height-30;
+          paddleX = (canvas.width-paddleWidth)/2;
+        } else {
+          alert("NOOOOOOO");
+          document.location.reload();
+        }
       }
     }
     
@@ -201,10 +218,11 @@
     //ball trajectory
     x += dx;
     y += dy;
+    requestAnimationFrame(draw);
   }
   
   //movement engine
-  let interval = setInterval(draw, ballSpeed);
+  draw();
 
 </script>
 
