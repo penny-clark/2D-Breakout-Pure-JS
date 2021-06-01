@@ -27,6 +27,26 @@
   let rightPressed = false;
   let leftPressed = false;
   let ballSpeed = 10;
+  
+  //brick layout vars
+  let brickRowCount = 3;
+  let brickColumnCount = 5;
+  let brickWidth = 75;
+  let brickHeight = 20;
+  let brickPadding = 10;
+  let brickOffsetTop = 30;
+  let brickOffsetLeft = 30;
+
+  //brick setup
+
+  const bricks = [];
+  for(let column = 0; column < brickColumnCount; column++) {
+    bricks[column] = [];
+    for(let row = 0; row < brickRowCount; row++) {
+      bricks[column][row] = { x: 0, y: 0 };
+    }
+  }
+
 
   // paddle movement
   document.addEventListener("keydown", keyDownHandler, false);
@@ -72,6 +92,22 @@
     ctx.closePath();
   }
 
+  function drawBricks() {
+    for(let c = 0; c < brickColumnCount; c++) {
+      for(let r= 0; r < brickRowCount; r++) {
+        let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+        let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+        bricks[c][r].x = brickX;
+        bricks[c][r].y = brickY;
+        ctx.beginPath();
+        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+  }
+
   //place pieces on the canvas and define motion
   function draw() {
     //draw canvas 
@@ -79,6 +115,7 @@
 
     //draw ball and paddle pieces
     drawBall();
+    drawBricks();
     drawPaddle();
     
     //defines container for ball motion
