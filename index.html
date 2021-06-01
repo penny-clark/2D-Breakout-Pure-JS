@@ -37,6 +37,9 @@
   let brickOffsetTop = 30;
   let brickOffsetLeft = 30;
 
+  //friend impressor var
+  let score = 0;
+
   //brick setup
   const bricks = [];
   for(let column = 0; column < brickColumnCount; column++) {
@@ -84,6 +87,12 @@
            dy = -dy;
            b.status = 0;
            ballColour = getRandomHexColour();
+           score++;
+           if(score == brickRowCount * brickColumnCount) {
+             alert("O HECK YA");
+             document.location.reload();
+             clearInterval(interval);
+           }
           }
         }
       }
@@ -125,18 +134,27 @@
     }
   }
 
+  function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Score: " + score, 8, 20)
+  }
+
   //place pieces on the canvas and define motion
   function draw() {
     //draw canvas 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    //draw ball and paddle pieces
+    //draw game pieces
     drawBall();
     drawBricks();
     drawPaddle();
 
     //brick eliminator
     collisionDetection();
+
+    //score
+    drawScore();
     
     //defines container for ball motion
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
