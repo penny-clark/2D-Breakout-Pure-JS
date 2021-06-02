@@ -12,13 +12,13 @@
 <header> Breakout </header>
 <body>
 
-<canvas id="myCanvas" width="680" height="420"></canvas>
+<canvas id="myCanvas" width="650" height="420"></canvas>
 
 <script>
 
   //TASKS
 
-  // convert back to setTimeout style animation for speed control
+  // convert back to setTimeout style animation for speed control DONE
   // add hard edge to all surfaces (emmulate walls logic)
   // add another level
   // convert alert box notifications to text display on screen with spacebar reset DONE
@@ -29,7 +29,7 @@
   const paddleHeight = 10;
   const paddleWidth = 75;
   let paddleX = (canvas.width-paddleWidth) / 2;
-  let x = canvas.width/2;
+  let x = paddleX + (paddleWidth / 2);
   let y = canvas.height-30;
   let dx = 2;
   let dy = -2;
@@ -43,7 +43,7 @@
   
   //brick layout vars
   let brickRowCount = 3;
-  let brickColumnCount = 5;
+  let brickColumnCount = 7;
   let brickWidth = 75;
   let brickHeight = 20;
   let brickPadding = 10;
@@ -100,6 +100,7 @@
     let relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 + paddleWidth / 2 && relativeX < canvas.width - paddleWidth / 2) {
       paddleX = relativeX - paddleWidth / 2;
+      if (!spacebarPressed) x = paddleX + (paddleWidth / 2)
     }
   }
 
@@ -218,9 +219,9 @@
       } else {
         if (lives > 1) {
           lives--;  
-          x = canvas.width/2;
-          y = canvas.height-30;
           paddleX = (canvas.width - paddleWidth) / 2;
+          y = canvas.height-30;
+          x = paddleX + (paddleWidth / 2);
           spacebarPressed = false;
         } else {
           // clearInterval(interval);
@@ -241,12 +242,14 @@
     //defines movement and container for paddle
     if(rightPressed) {
       paddleX += 7;
+      if (!spacebarPressed) x = paddleX + (paddleWidth / 2);
       if (paddleX + paddleWidth > canvas.width) {
         paddleX = canvas.width - paddleWidth;
       }
     }
     else if(leftPressed) {
       paddleX -= 7;
+      if (!spacebarPressed) x = paddleX + (paddleWidth / 2);
       if (paddleX < 0) {
         paddleX = 0;
       }
