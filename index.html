@@ -6,13 +6,23 @@
     <style>
     	* { padding: 0; margin: 0; }
     	canvas { background: #eee; display: block; margin: 0 auto; }
+      header { font-size: 30px; text-align: center; padding: 5px;}
     </style>
 </head>
+<header> Let's play </header>
 <body>
 
 <canvas id="myCanvas" width="480" height="320"></canvas>
 
 <script>
+
+  //TASKS
+
+  // convert back to setTimeout style animation for speed control
+  // add hard edge to all surfaces (emmulate walls logic)
+  // add another level
+  // convert alert box notifications to text display on screen with spacebar reset
+
 	const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
   const ballRadius = 10;
@@ -40,7 +50,7 @@
   //second chance var
   let lives = 3;
 
-  //friend impressor var
+  //friend impresser var
   let score = 0;
 
   //brick setup
@@ -94,7 +104,7 @@
         let b = bricks[c][r];
         //calculations
         if(b.status == 1) {
-         if(x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+         if(x + ballRadius > b.x && x + ballRadius < b.x + brickWidth && y + ballRadius > b.y && y + ballRadius < b.y + brickHeight) {
            dy = -dy;
            b.status = 0;
            ballColour = getRandomHexColour();
@@ -102,7 +112,7 @@
            if(score == brickRowCount * brickColumnCount) {
              alert("O HECK YA");
              document.location.reload();
-           }
+            }
           }
         }
       }
@@ -174,7 +184,7 @@
     drawLives();
     
     //defines container for ball motion
-    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+    if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
       dx = -dx;
       ballColour = getRandomHexColour();
     }
@@ -196,6 +206,7 @@
           paddleX = (canvas.width-paddleWidth)/2;
         } else {
           alert("NOOOOOOO");
+          lives = 3;
           document.location.reload();
         }
       }
