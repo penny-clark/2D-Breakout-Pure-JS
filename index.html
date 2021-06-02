@@ -22,6 +22,7 @@
   // add hard edge to all surfaces (emmulate walls logic)
   // add another level
   // convert alert box notifications to text display on screen with spacebar reset DONE
+  // add launch location control DONE
 
 	const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
@@ -58,11 +59,26 @@
 
   //brick setup
   const bricks = [];
+  let id = 1;
   for(let column = 0; column < brickColumnCount; column++) {
     bricks[column] = [];
     for(let row = 0; row < brickRowCount; row++) {
-      bricks[column][row] = { x: 0, y: 0, status: 1 };
+      bricks[column][row] = { x: 0, y: 0, status: 1, id: id };
+      id++;
     }
+  }
+  // console.log(bricks, "bricks")
+  // // // console.log(bricks.filter(brick => brick.filter(brickArrItem => brickArrItem.status == 1)).length, "number of 1 status bricks")
+  // // console.log(checkBricks())
+
+  function checkGameContinues() {
+    let gameContinues = false;
+    bricks.forEach(brick => brick.forEach(bricksObj => {
+      if(bricksObj.status == 1) {
+        gameContinues = true;
+        return gameContinues
+      }}))
+    return gameContinues;
   }
  
   // colour changing just for fun :)
@@ -100,7 +116,7 @@
     let relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 + paddleWidth / 2 && relativeX < canvas.width - paddleWidth / 2) {
       paddleX = relativeX - paddleWidth / 2;
-      if (!spacebarPressed) x = paddleX + (paddleWidth / 2)
+      if (!spacebarPressed && !winScreen && !gameOverScreen) x = paddleX + (paddleWidth / 2)
     }
   }
 
@@ -110,14 +126,15 @@
       for (let r = 0; r < brickRowCount; r++) {
         let b = bricks[c][r];
         //calculations
-        if(b.status == 1) {
+        if(b.status == 1 || b.status == 2) {
          if(x + ballRadius > b.x && x + ballRadius < b.x + brickWidth && y + ballRadius > b.y && y < b.y + brickHeight) {
            dy = -dy;
+           if (b.status == 1) {
            b.status = 0;
-           ballColour = getRandomHexColour();
            score++;
-           if(score == brickRowCount * brickColumnCount) {
-            // clearInterval(interval);
+           }
+           ballColour = getRandomHexColour();
+           if(!checkGameContinues()) {
             winScreen = true;
             spacebarPressed = false;
             }
@@ -144,10 +161,43 @@
     ctx.closePath();
   }
 
+  //this will be level 1
+  // function drawBricks() {
+  //   for(let c = 0; c < brickColumnCount; c++) {
+  //     for(let r= 0; r < brickRowCount; r++) {
+  //       if(bricks[c][r].status == 1) {
+  //         let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+  //         let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+  //         bricks[c][r].x = brickX;
+  //         bricks[c][r].y = brickY;
+  //         ctx.beginPath();
+  //         ctx.rect(brickX, brickY, brickWidth, brickHeight);
+  //         ctx.fillStyle = "#0095DD";
+  //         ctx.fill();
+  //         ctx.closePath();
+  //       }
+  //     }
+  //   }
+  // }
+
+  //designing level 2
   function drawBricks() {
+    // console.log(bricks, "bricks")
     for(let c = 0; c < brickColumnCount; c++) {
       for(let r= 0; r < brickRowCount; r++) {
-        if(bricks[c][r].status == 1) {
+        if(bricks[c][r].status == 1 || bricks[c][r].status == 2) {
+          if(bricks[c][r].id == 5 || bricks[c][r].id == 17) {
+            bricks[c][r].status = 2
+            let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+            let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#332e2d";
+            ctx.fill();
+            ctx.closePath();
+          } else {
           let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
           let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
           bricks[c][r].x = brickX;
@@ -157,6 +207,7 @@
           ctx.fillStyle = "#0095DD";
           ctx.fill();
           ctx.closePath();
+          }
         }
       }
     }
@@ -224,7 +275,6 @@
           x = paddleX + (paddleWidth / 2);
           spacebarPressed = false;
         } else {
-          // clearInterval(interval);
           spacebarPressed = false;
           gameOverScreen = true;
         }
@@ -239,27 +289,28 @@
       gameWin();
     }
     
-    //defines movement and container for paddle
+    //defines movement and container for paddle and ball launch location
     if(rightPressed) {
       paddleX += 7;
-      if (!spacebarPressed) x = paddleX + (paddleWidth / 2);
+      if (!spacebarPressed && !winScreen && !gameOverScreen) x = paddleX + (paddleWidth / 2);
       if (paddleX + paddleWidth > canvas.width) {
         paddleX = canvas.width - paddleWidth;
       }
     }
     else if(leftPressed) {
       paddleX -= 7;
-      if (!spacebarPressed) x = paddleX + (paddleWidth / 2);
+      if (!spacebarPressed && !winScreen && !gameOverScreen) x = paddleX + (paddleWidth / 2);
       if (paddleX < 0) {
         paddleX = 0;
       }
     }
 
+
     if(spacebarPressed) {
       //ball trajectory
       if (gameOverScreen || winScreen) {
-        clearInterval(interval);
         document.location.reload();
+        clearInterval(interval);
       }
       x += dx;
       y += dy;
