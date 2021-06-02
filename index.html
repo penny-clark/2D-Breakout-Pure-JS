@@ -57,6 +57,7 @@
   let score = 0;
 
   let gameOverScreen = false;
+  let winScreen = false;
 
   //brick setup
   const bricks = [];
@@ -118,8 +119,8 @@
            ballColour = getRandomHexColour();
            score++;
            if(score == brickRowCount * brickColumnCount) {
-             alert("O HECK YA");
-             document.location.reload();
+            winScreen = true;
+            spacebarPressed = false;
             }
           }
         }
@@ -180,6 +181,12 @@
     ctx.fillText("NOOOOOOOO!", 100, 160)
   }
 
+  function gameWin() {
+    ctx.font = "40px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Winner!/Gagnant!", 100, 160)
+  }
+
   //place pieces on the canvas and define motion
   function draw() {
     //draw canvas 
@@ -226,8 +233,12 @@
       }
     }
 
-    if (gameOverScreen){
+    if (gameOverScreen) {
       gameOver();
+    }
+
+    if (winScreen) {
+      gameWin();
     }
     
     //defines movement and container for paddle
@@ -246,7 +257,7 @@
 
     if(spacebarPressed) {
       //ball trajectory
-      if (gameOverScreen) {
+      if (gameOverScreen || winScreen) {
         document.location.reload();
       }
       x += dx;
