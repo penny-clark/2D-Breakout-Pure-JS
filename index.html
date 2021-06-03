@@ -19,8 +19,8 @@
   //TASKS
 
   // convert back to setTimeout style animation for speed control DONE
-  // add hard edge to all surfaces (emmulate walls logic)
-  // add another level
+  // add hard edge to all surfaces (emmulate walls logic) BASICALLY DONE
+  // add another level DONE
   // convert alert box notifications to text display on screen with spacebar reset DONE
   // add launch location control DONE
 
@@ -51,39 +51,63 @@
   let brickOffsetTop = 30;
   let brickOffsetLeft = 30;
 
-  //user gratification vars
+  //game continuity vars
   let lives = 3;
   let score = 0;
+  let level = 1;
   let gameOverScreen = false;
   let winScreen = false;
+  let nextLevelScreen = false;
+
 
   //brick setup
-  let bricks = [];
+  const bricksLvl1 = [];
+  const bricksLvl2 = [];
   
-  function bricksSetUp () {
+  function bricksSetUpLvl1 () {
     let id = 1;
-    for(let column = 0; column < brickColumnCount; column++) {
-      bricks[column] = [];
-      for(let row = 0; row < brickRowCount; row++) {
+    for (let column = 0; column < brickColumnCount; column++) {
+      bricksLvl1[column] = [];
+      for (let row = 0; row < brickRowCount; row++) {
+        bricksLvl1[column][row] = { x: 0, y: 0, status: 1, id: id };
+        id++;
+      }
+    }
+  }
+  bricksSetUpLvl1();
+  
+  function bricksSetUpLvl2 () {
+    let id = 1;
+    for (let column = 0; column < brickColumnCount; column++) {
+      bricksLvl2[column] = [];
+      for (let row = 0; row < brickRowCount; row++) {
         if (id === 5 || id === 17) {
-          bricks[column][row] = { x: 0, y: 0, status: 2, id: id };
+          bricksLvl2[column][row] = { x: 0, y: 0, status: 2, id: id };
         } else {
-          bricks[column][row] = { x: 0, y: 0, status: 1, id: id };
+          bricksLvl2[column][row] = { x: 0, y: 0, status: 1, id: id };
         }
         id++;
       }
     }
   }
-  
-  bricksSetUp();
+
+  bricksSetUpLvl2();
 
   function checkGameContinues() {
     let gameContinues = false;
-    bricks.forEach(brick => brick.forEach(bricksObj => {
+    if (level == 1) {
+      bricksLvl1.forEach(brick => brick.forEach(bricksObj => {
       if(bricksObj.status == 1) {
         gameContinues = true;
         return gameContinues
       }}))
+    } else {
+      bricksLvl2.forEach(brick => brick.forEach(bricksObj => {
+      if(bricksObj.status == 1) {
+        gameContinues = true;
+        return gameContinues
+      }}))
+    }
     return gameContinues;
   }
  
@@ -126,29 +150,40 @@
     }
   }
 
-  // brick collision detection - includes game winning conditions
+  //brick collision detection - includes game winning conditions
   function collisionDetection() {
     for (let c = 0; c < brickColumnCount; c++) {
       for (let r = 0; r < brickRowCount; r++) {
-        let b = bricks[c][r];
+        let b;
+        if (level === 1) {
+          b = bricksLvl1[c][r];
+        } else if (level === 2) {
+          b = bricksLvl2[c][r];
+        }
         //calculations
         if(b.status == 1 || b.status == 2) {
-         if(x + ballRadius > b.x && x + ballRadius < b.x + brickWidth && y + ballRadius > b.y && y < b.y + brickHeight) {
-           dy = -dy;
+          if(x + ballRadius > b.x && x + ballRadius < b.x + brickWidth && y + ballRadius > b.y && y < b.y + brickHeight) {
+            dy = -dy;
 
-           if (b.status == 1) {
-             b.status = 0;
-             score++;
-            } else if (b.status == 2) {
-             b.status = 1;
+            if (b.status == 1) {
+                b.status = 0;
+                score++;
+              } else if (b.status == 2) {
+                b.status = 1;
+              }
+
+            ballColour = getRandomHexColour();
+
+            if (!checkGameContinues() && level === 1) {
+              nextLevelScreen = true;
+              paddleX = (canvas.width - paddleWidth) / 2;
+              y = canvas.height-30;
+              x = paddleX + (paddleWidth / 2);
+              spacebarPressed = false;
+            } else if (!checkGameContinues() && level === 2) {  
+              winScreen = true;
+              spacebarPressed = false;
             }
-
-          ballColour = getRandomHexColour();
-
-          if(!checkGameContinues()) {
-            winScreen = true;
-            spacebarPressed = false;
-          }
           }
         }
       }
@@ -172,50 +207,50 @@
     ctx.closePath();
   }
 
-  //this will be level 1
-  // function drawBricks() {
-  //   for(let c = 0; c < brickColumnCount; c++) {
-  //     for(let r= 0; r < brickRowCount; r++) {
-  //       if(bricks[c][r].status == 1) {
-  //         let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-  //         let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-  //         bricks[c][r].x = brickX;
-  //         bricks[c][r].y = brickY;
-  //         ctx.beginPath();
-  //         ctx.rect(brickX, brickY, brickWidth, brickHeight);
-  //         ctx.fillStyle = "#0095DD";
-  //         ctx.fill();
-  //         ctx.closePath();
-  //       }
-  //     }
-  //   }
-  // }
-
-  //designing level 2
-  function drawBricks() {
+  //level 1
+  function drawBricksLvl1() {
     for(let c = 0; c < brickColumnCount; c++) {
       for(let r= 0; r < brickRowCount; r++) {
-        if(bricks[c][r].status == 1 || bricks[c][r].status == 2) {
-          if(bricks[c][r].status === 2) {
+        if(bricksLvl1[c][r].status == 1) {
+          let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+          let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+          bricksLvl1[c][r].x = brickX;
+          bricksLvl1[c][r].y = brickY;
+          ctx.beginPath();
+          ctx.rect(brickX, brickY, brickWidth, brickHeight);
+          ctx.fillStyle = "#0095DD";
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+    }
+  }
+
+  //level 2
+  function drawBricksLvl2() {
+    for(let c = 0; c < brickColumnCount; c++) {
+      for(let r= 0; r < brickRowCount; r++) {
+        if(bricksLvl2[c][r].status == 1 || bricksLvl2[c][r].status == 2) {
+          if(bricksLvl2[c][r].status === 2) {
             let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
             let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
+            bricksLvl2[c][r].x = brickX;
+            bricksLvl2[c][r].y = brickY;
             ctx.beginPath();
             ctx.rect(brickX, brickY, brickWidth, brickHeight);
             ctx.fillStyle = "#332e2d";
             ctx.fill();
             ctx.closePath();
           } else {
-          let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-          let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-          bricks[c][r].x = brickX;
-          bricks[c][r].y = brickY;
-          ctx.beginPath();
-          ctx.rect(brickX, brickY, brickWidth, brickHeight);
-          ctx.fillStyle = "#0095DD";
-          ctx.fill();
-          ctx.closePath();
+            let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+            let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+            bricksLvl2[c][r].x = brickX;
+            bricksLvl2[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
           }
         }
       }
@@ -225,25 +260,37 @@
   function drawScore() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#0095DD";
-    ctx.fillText("Score: " + score, 8, 20)
+    ctx.fillText("Score: " + score, 10, 20)
   }
 
   function drawLives() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#0095DD";
-    ctx.fillText("Lives: " + lives, 80, 20)
+    ctx.fillText("Lives: " + lives, 85, 20)
+  }
+
+  function drawLevelDisplay() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Level: " + level, 155, 20)
   }
 
   function gameOver() {
     ctx.font = "40px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("NOOOOOOOO!", 100, 160)
+    ctx.fillText("NOOOOOOOO!", 180, 160)
   }
 
   function gameWin() {
     ctx.font = "40px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("O heck ya B-)", 100, 160)
+    ctx.fillText("O heck ya! You won B-)", 150, 160)
+  }
+
+  function nextLevel() {
+    ctx.font = "40px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Level " + level, 265, 160)
   }
 
   //place pieces on the canvas and define motion
@@ -253,7 +300,12 @@
 
     //draw game pieces
     drawBall();
-    drawBricks();
+    if (level === 1) {
+      drawBricksLvl1();
+    }
+    if (level === 2) {
+      drawBricksLvl2();
+    }
     drawPaddle();
 
     //brick eliminator
@@ -262,6 +314,7 @@
     //player stats
     drawScore();
     drawLives();
+    drawLevelDisplay();
     
     //defines container for ball motion
     if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -274,7 +327,7 @@
       dy = -dy;
       ballColour = getRandomHexColour();
     } else if (y + dy > canvas.height - ballRadius) {
-      if(x > paddleX && x < paddleX + paddleWidth) {
+      if(x + ballRadius >= paddleX && x - ballRadius <= paddleX + paddleWidth) {
         dy = -dy;
       } else {
         if (lives > 1) {
@@ -297,16 +350,21 @@
     if (winScreen) {
       gameWin();
     }
+
+    if (nextLevelScreen) {
+      nextLevel();
+      level = 2;
+    }
     
     //defines movement and container for paddle and ball launch location
-    if(rightPressed) {
+    if (rightPressed) {
       paddleX += 7;
       if (!spacebarPressed && !winScreen && !gameOverScreen) x = paddleX + (paddleWidth / 2);
       if (paddleX + paddleWidth > canvas.width) {
         paddleX = canvas.width - paddleWidth;
       }
     }
-    else if(leftPressed) {
+    else if (leftPressed) {
       paddleX -= 7;
       if (!spacebarPressed && !winScreen && !gameOverScreen) x = paddleX + (paddleWidth / 2);
       if (paddleX < 0) {
@@ -315,8 +373,11 @@
     }
 
 
-    if(spacebarPressed) {
+    if (spacebarPressed) {
       //ball trajectory
+      if (nextLevelScreen) {
+        nextLevelScreen = false;
+      }
       if (gameOverScreen || winScreen) {
         document.location.reload();
         clearInterval(interval);
