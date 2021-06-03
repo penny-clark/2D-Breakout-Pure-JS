@@ -58,18 +58,24 @@
   let winScreen = false;
 
   //brick setup
-  const bricks = [];
-  let id = 1;
-  for(let column = 0; column < brickColumnCount; column++) {
-    bricks[column] = [];
-    for(let row = 0; row < brickRowCount; row++) {
-      bricks[column][row] = { x: 0, y: 0, status: 1, id: id };
-      id++;
+  let bricks = [];
+  
+  function bricksSetUp () {
+    let id = 1;
+    for(let column = 0; column < brickColumnCount; column++) {
+      bricks[column] = [];
+      for(let row = 0; row < brickRowCount; row++) {
+        if (id === 5 || id === 17) {
+          bricks[column][row] = { x: 0, y: 0, status: 2, id: id };
+        } else {
+          bricks[column][row] = { x: 0, y: 0, status: 1, id: id };
+        }
+        id++;
+      }
     }
   }
-  // console.log(bricks, "bricks")
-  // // // console.log(bricks.filter(brick => brick.filter(brickArrItem => brickArrItem.status == 1)).length, "number of 1 status bricks")
-  // // console.log(checkBricks())
+  
+  bricksSetUp();
 
   function checkGameContinues() {
     let gameContinues = false;
@@ -120,7 +126,7 @@
     }
   }
 
-  // brick collision detection & includes game winning conditions
+  // brick collision detection - includes game winning conditions
   function collisionDetection() {
     for (let c = 0; c < brickColumnCount; c++) {
       for (let r = 0; r < brickRowCount; r++) {
@@ -129,15 +135,20 @@
         if(b.status == 1 || b.status == 2) {
          if(x + ballRadius > b.x && x + ballRadius < b.x + brickWidth && y + ballRadius > b.y && y < b.y + brickHeight) {
            dy = -dy;
+
            if (b.status == 1) {
-           b.status = 0;
-           score++;
-           }
-           ballColour = getRandomHexColour();
-           if(!checkGameContinues()) {
+             b.status = 0;
+             score++;
+            } else if (b.status == 2) {
+             b.status = 1;
+            }
+
+          ballColour = getRandomHexColour();
+
+          if(!checkGameContinues()) {
             winScreen = true;
             spacebarPressed = false;
-            }
+          }
           }
         }
       }
@@ -182,12 +193,10 @@
 
   //designing level 2
   function drawBricks() {
-    // console.log(bricks, "bricks")
     for(let c = 0; c < brickColumnCount; c++) {
       for(let r= 0; r < brickRowCount; r++) {
         if(bricks[c][r].status == 1 || bricks[c][r].status == 2) {
-          if(bricks[c][r].id == 5 || bricks[c][r].id == 17) {
-            bricks[c][r].status = 2
+          if(bricks[c][r].status === 2) {
             let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
             let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
             bricks[c][r].x = brickX;
