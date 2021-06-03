@@ -115,8 +115,8 @@
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
   document.addEventListener("mousemove", mouseMoveHandler, false);
-  document.addEventListener("touchstart", touchMoveHandler, false);
-  // document.addEventListener("touchmove", touchMoveHandler, false);
+  document.addEventListener("touchstart", (e) => {e.preventDefault; spacebarPressed = true;}, false);
+  document.addEventListener("touchmove", touchMoveHandler, false);
   document.addEventListener("touchend", touchEndHandler, false);
 
   function keyDownHandler(e) {
@@ -150,9 +150,7 @@
 
   function touchMoveHandler(e) {
     e.preventDefault;
-    if (!spacebarPressed) {
-      spacebarPressed = true
-    }
+    let touches = e.changedTouches;
     let relativeX = e.clientX;
     if (relativeX < paddleX + paddleWidth / 2) {
       rightPressed = true;
