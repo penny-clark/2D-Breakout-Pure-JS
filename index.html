@@ -18,14 +18,6 @@
 
 <script>
 
-  //TASKS
-
-  // convert back to setTimeout style animation for speed control DONE
-  // add hard edge to all surfaces (emmulate walls logic) BASICALLY DONE
-  // add another level DONE
-  // convert alert box notifications to text display on screen with spacebar reset DONE
-  // add launch location control DONE
-
 	const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
   const ballRadius = 10;
@@ -84,7 +76,7 @@
     for (let column = 0; column < brickColumnCount; column++) {
       bricksLvl2[column] = [];
       for (let row = 0; row < brickRowCount; row++) {
-        if (id === 5 || id === 17) {
+        if (id % 3 === 0) {
           bricksLvl2[column][row] = { x: 0, y: 0, status: 2, id: id };
         } else {
           bricksLvl2[column][row] = { x: 0, y: 0, status: 1, id: id };
@@ -106,7 +98,7 @@
       }}))
     } else {
       bricksLvl2.forEach(brick => brick.forEach(bricksObj => {
-      if(bricksObj.status == 1) {
+      if(bricksObj.status === 1 || bricksObj.status === 2) {
         gameContinues = true;
         return gameContinues
       }}))
@@ -281,20 +273,20 @@
   function gameStart() {
     ctx.font = "20px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("Press spacebar to start", 220, 160)
-    ctx.fillText("Use the arrow keys or your mouse to move", 120, 190)
+    ctx.fillText("Press spacebar to play", 220, 160)
+    ctx.fillText("Use the arrow keys or your mouse to move", 135, 190)
   }
 
   function gameOver() {
     ctx.font = "40px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("NOOOOOOOO!", 180, 160)
+    ctx.fillText("NOOOOOOOO!", 180, 180)
   }
 
   function gameWin() {
     ctx.font = "40px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("O heck ya! You won B-)", 150, 160)
+    ctx.fillText("O heck ya! You won B-)", 115, 180)
   }
 
   function nextLevel() {
@@ -412,10 +404,10 @@
 </script>
 <br>
 <div>
-  <p> INFO </p>
+  <p><b>INFO</b></p>
   <p>This game builds on the MDN Breakout tutorial. Try it for yourself <a href ="https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript">here!</a></p>
   <p>Features that I added include:</p>
-  <p>Second level with multi-hit bricks | Control over game start/continuation with the spacebar key | Control over ball launch postion | Non-dispruptive notificiations (replaced alert boxes with in-game text) | Hard surface recognition on paddle </p>
+  <p>Second level with multi-hit bricks | Control over game start/continuation with the spacebar key | Control over ball launch postion | Non-disruptive notificiations (replaced alert boxes with in-game text) | Hard surface recognition on paddle </p>
   </div>
 </body>
 </html>
