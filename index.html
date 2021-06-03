@@ -116,7 +116,7 @@
   document.addEventListener("keyup", keyUpHandler, false);
   document.addEventListener("mousemove", mouseMoveHandler, false);
   document.addEventListener("touchstart", (e) => {e.preventDefault; spacebarPressed = true;}, false);
-  document.addEventListener("touchmove", touchMoveHandler, false);
+  // document.addEventListener("touchmove", touchMoveHandler, false);
   document.addEventListener("touchend", touchEndHandler, false);
 
   function keyDownHandler(e) {
@@ -174,15 +174,17 @@
         } else if (level === 2) {
           b = bricksLvl2[c][r];
         }
-        //calculations
+       
         if(b.status == 1 || b.status == 2) {
           if(x + ballRadius > b.x && x - ballRadius < b.x + brickWidth && y + ballRadius > b.y && y - ballRadius < b.y + brickHeight) {
             if (b.status == 1) {
                 dy = -dy;
+                dx= -dx;
                 b.status = 0;
                 score++;
               } else if (b.status == 2) {
                 dy = -dy;
+                dx = -dx;
                 b.status = 1;
               }
 
@@ -424,7 +426,7 @@
 <br>
 <div>
   <p><b>INFO</b></p>
-  <p>This game builds on the MDN Breakout tutorial. Try it for yourself <a href ="https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript">here!</a></p>
+  <p>This game builds on the MDN Breakout tutorial. Try it for yourself <a href ="https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript">here</a></p>
   <p>Features that I added include:</p>
   <p>Second level with multi-hit bricks | Control over game start/continuation with the spacebar key | Control over ball launch postion | Non-disruptive notificiations (replaced alert boxes with in-game text) | Hard surface recognition on paddle </p>
   </div>
