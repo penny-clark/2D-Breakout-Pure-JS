@@ -5,13 +5,15 @@
     <title>Gamedev Canvas Workshop</title>
     <style>
     	* { padding: 0; margin: 0; }
+      body {display: flex; flex-direction: column; align-items: flex-start;}
     	canvas { background: #eee; display: block; margin: 0 auto; }
-      header { font-family: "Arial"; font-size: 30px; text-align: center; padding: 5px;}
+      header { font-family: "Arial"; font-size: 30px; display: flex; align-self: center; padding: 5px;}
+      p { font-family: "Arial"; font-size: 12px; text-align: left; padding: 5px;}
+      div { margin: auto; width: 650px;}
     </style>
 </head>
-<header> Breakout </header>
 <body>
-
+<header> Breakout </header>
 <canvas id="myCanvas" width="650" height="420"></canvas>
 
 <script>
@@ -55,6 +57,7 @@
   let lives = 3;
   let score = 0;
   let level = 1;
+  let gameStartScreen = true;
   let gameOverScreen = false;
   let winScreen = false;
   let nextLevelScreen = false;
@@ -275,6 +278,13 @@
     ctx.fillText("Level: " + level, 155, 20)
   }
 
+  function gameStart() {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Press spacebar to start", 220, 160)
+    ctx.fillText("Use the arrow keys or your mouse to move", 120, 190)
+  }
+
   function gameOver() {
     ctx.font = "40px Arial";
     ctx.fillStyle = "#000000";
@@ -343,6 +353,10 @@
       }
     }
 
+    if (gameStartScreen) {
+      gameStart();
+    }
+
     if (gameOverScreen) {
       gameOver();
     }
@@ -374,6 +388,9 @@
 
 
     if (spacebarPressed) {
+      if (gameStartScreen) {
+        gameStartScreen = false;
+      }
       //ball trajectory
       if (nextLevelScreen) {
         nextLevelScreen = false;
@@ -393,6 +410,12 @@
   draw();
 
 </script>
-
+<br>
+<div>
+  <p> INFO </p>
+  <p>This game builds on the MDN Breakout tutorial. Try it for yourself <a href ="https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript">here!</a></p>
+  <p>Features that I added include:</p>
+  <p>Second level with multi-hit bricks | Control over game start/continuation with the spacebar key | Control over ball launch postion | Non-dispruptive notificiations (replaced alert boxes with in-game text) | Hard surface recognition on paddle </p>
+  </div>
 </body>
 </html>
