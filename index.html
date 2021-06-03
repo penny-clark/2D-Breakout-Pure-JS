@@ -176,15 +176,14 @@
         }
        
         if(b.status == 1 || b.status == 2) {
+        
           if(x + ballRadius > b.x && x - ballRadius < b.x + brickWidth && y + ballRadius > b.y && y - ballRadius < b.y + brickHeight) {
             if (b.status == 1) {
                 dy = -dy;
-                dx= -dx;
                 b.status = 0;
                 score++;
               } else if (b.status == 2) {
                 dy = -dy;
-                dx = -dx;
                 b.status = 1;
               }
 
